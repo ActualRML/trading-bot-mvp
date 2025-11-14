@@ -1,87 +1,63 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
 
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "../libs/ReentrancyGuard.sol";
-import "../interfaces/IUniswapV2Router.sol";
 
-contract DexExecutor is Ownable, ReentrancyGuard {
-    IUniswapV2Router public router;
+import { AccessManaged } from "./utils/AccessManaged.sol";
+import { IOracleAdapter } from "./interfaces/IOracleAdapter.sol";
+import { ISessionRegistry } from "./interfaces/ISessionRegistry.sol";
 
-    constructor(address _router) Ownable(msg.sender) {
-        router = IUniswapV2Router(_router);
+
+contract DexExecutor is AccessManaged {
+    IOracleAdapter public oracle;
+    ISessionRegistry public sessionRegistry;
+
+    event OracleUpdated(address indexed newOracle);
+    event SessionRegistryUpdated(address indexed newRegistry);
+    event TradeExecuted(address indexed user, address tokenIn, address tokenOut, uint256 amountIn, int64 price);
+
+
+    constructor(address _oracle, address _sessionRegistry) {
+        if (_oracle != address(0)) oracle = IOracleAdapter(_oracle);
+        if (_sessionRegistry != address(0)) sessionRegistry = ISessionRegistry(_sessionRegistry);
     }
 
-    event SwapExecuted(
-        address indexed user,
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 amountOut
-    );
 
-    function setRouter(address _router) external onlyOwner {
-        router = IUniswapV2Router(_router);
+    function setOracle(address newOracle) external onlyOwner {
+        oracle = IOracleAdapter(newOracle);
+        emit OracleUpdated(newOracle);
     }
 
-    /// @notice Tarik token yang tersisa di kontrak
-    function withdraw(address token, address to, uint256 amount) external onlyOwner {
-        require(to != address(0), "bad to");
-        _safeTransfer(IERC20(token), to, amount);
+
+    function setSessionRegistry(address newRegistry) external onlyOwner {
+        sessionRegistry = ISessionRegistry(newRegistry);
+        emit SessionRegistryUpdated(newRegistry);
     }
 
-    /// @notice Eksekusi swap V2. Hasil langsung ke recipient.
-    function executeSwap(
-        address[] calldata path,
-        address tokenIn,
-        address tokenOut,
-        uint256 amountIn,
-        uint256 amountOutMin,
-        address recipient,
-        uint256 deadline
-    ) external onlyOwner nonReentrant {
-        require(path.length >= 2, "path too short");
-        require(path[0] == tokenIn, "tokenIn mismatch");
-        require(path[path.length - 1] == tokenOut, "tokenOut mismatch");
-        require(amountIn > 0, "zero amountIn");
-        require(recipient != address(0), "bad recipient");
 
-        // tarik token dari owner
-        _safeTransferFrom(IERC20(tokenIn), msg.sender, address(this), amountIn);
+/// @notice Simulate a swap. Does not move funds. Emits price at execution time.
+/// @dev For MVP this function only reads oracle and emits an event. `msg.sender` is considered the user.
+    function executeSwap(address tokenIn, address tokenOut, uint256 amountIn) external {
+        require(amountIn > 0, "DexExecutor: zero amount");
+        // optional: check session active if sessionRegistry is set
+        if (address(sessionRegistry) != address(0)) {
+        require(sessionRegistry.isActive(msg.sender), "DexExecutor: session inactive");
+        }
 
-        // approve aman (0 -> amount)
-        _safeApprove(IERC20(tokenIn), address(router), 0);
-        _safeApprove(IERC20(tokenIn), address(router), amountIn);
 
-        // swap, proteksi slippage via amountOutMin
-        uint[] memory amounts = router.swapExactTokensForTokens(
-            amountIn,
-            amountOutMin,
-            path,
-            recipient,
-            deadline
-        );
+        int64 price = 0;
+        if (address(oracle) != address(0)) {
+        // derive priceId for pair: this is a simple deterministic choice for MVP
+        bytes32 priceId;
+        assembly {
+            mstore(0x00, tokenIn)
+            mstore(0x20, tokenOut)
+            priceId := keccak256(0x00, 0x40)
+            }
+        (int64 p, , ) = oracle.getPrice(priceId);
+        price = p;
+        }
 
-        emit SwapExecuted(msg.sender, tokenIn, tokenOut, amounts[0], amounts[amounts.length - 1]);
-    }
 
-    // --- helpers: safe ERC20 calls (handle tokens non-standard)
-    function _safeApprove(IERC20 token, address spender, uint256 value) internal {
-        (bool success, bytes memory data) =
-            address(token).call(abi.encodeWithSelector(token.approve.selector, spender, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "approve failed");
-    }
-
-    function _safeTransfer(IERC20 token, address to, uint256 value) internal {
-        (bool success, bytes memory data) =
-            address(token).call(abi.encodeWithSelector(token.transfer.selector, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "transfer failed");
-    }
-
-    function _safeTransferFrom(IERC20 token, address from, address to, uint256 value) internal {
-        (bool success, bytes memory data) =
-            address(token).call(abi.encodeWithSelector(token.transferFrom.selector, from, to, value));
-        require(success && (data.length == 0 || abi.decode(data, (bool))), "transferFrom failed");
+        emit TradeExecuted(msg.sender, tokenIn, tokenOut, amountIn, price);
     }
 }
