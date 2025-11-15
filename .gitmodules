@@ -6,3 +6,7 @@
     path = contracts/lib/pyth-sdk-solidity
     url = https://github.com/pyth-network/pyth-sdk-solidity
 
+[submodule "contracts/lib/forge-std"]
+	path = contracts/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std.git
+
