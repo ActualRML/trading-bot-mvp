@@ -140,3 +140,5 @@ vite.config.ts.timestamp-*
 .env
 contracts/.env
 frontend/.env.local
+
+trading-bot-mvp/contracts/.gitignore
