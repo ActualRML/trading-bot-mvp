@@ -22,6 +22,7 @@ remappings = [
     "solmate/=lib/solmate/src/"
 ]
 
+
 # Fuzz testing
 [fuzz]
 runs = 256

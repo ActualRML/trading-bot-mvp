@@ -1,8 +1,18 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.30;
+
+import { IPyth } from "@pyth/IPyth.sol";
+import { PythStructs } from "@pyth/PythStructs.sol";
 
 contract PythOracleAdapter {
-    function getPrice(bytes32 asset) external pure returns (int256) {
-        return 0;
+    IPyth public pyth;
+
+    constructor(address _pyth) {
+        pyth = IPyth(_pyth);
+    }
+
+    function getPrice(bytes32 priceId) external view returns (int64, uint64) {
+        PythStructs.Price memory p = pyth.getPriceNoOlderThan(priceId, 30);
+        return (p.price, p.conf);
     }
 }
