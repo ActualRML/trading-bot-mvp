@@ -10,21 +10,25 @@ contract DeployFutures is Script {
     function run() external {
         vm.startBroadcast();
 
+        // Deployer
+        address deployer = msg.sender;
+
         // Deploy Vault
         FuturesVault vault = new FuturesVault();
 
         // Deploy OrderBook
-        FuturesOrderBook orderBook = new FuturesOrderBook(msg.sender, address(vault));
+        FuturesOrderBook orderBook = new FuturesOrderBook(deployer, address(vault));
+
+        // Fee settings
+        address feeRecipient = deployer; // jangan 0xDEAD
+        uint256 feeBps = 10; // 0.1%
+
+        // Oracle Router yang bener
+        address oracleAddress = 0x5FC8d32690cc91D4c39d9d3abcBD16989F875707;
 
         // Deploy Exchange
-        address feeRecipient = 0xDEAD;
-        uint256 feeBps = 10; 
-
-        // ganti 'oracleAddress' dengan hasil deploy PriceOracleRouter
-        address oracleAddress = 0x1111111111111111111111111111111111111111;
-
         FuturesExchange exchange = new FuturesExchange(
-            msg.sender,
+            deployer,
             address(vault),
             address(orderBook),
             oracleAddress,
@@ -32,7 +36,7 @@ contract DeployFutures is Script {
             feeBps
         );
 
-        // Set exchange di Vault & OrderBook
+        // Set exchange
         vault.setExchange(address(exchange));
         orderBook.setExchange(address(exchange));
 

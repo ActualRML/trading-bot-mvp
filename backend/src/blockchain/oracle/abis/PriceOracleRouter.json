@@ -1,0 +1,35 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_pyth", "type": "address" },
+      { "internalType": "address", "name": "_chainlink", "type": "address" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "chainlink",
+    "outputs": [
+      { "internalType": "contract ChainlinkOracleAdapter", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "pyth",
+    "outputs": [
+      { "internalType": "contract PythOracleAdapter", "name": "", "type": "address" }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "priceId", "type": "bytes32" }],
+    "name": "getPrice",
+    "outputs": [{ "internalType": "int256", "name": "", "type": "int256" }],
+    "stateMutability": "view",
+    "type": "function"
+  }
+]

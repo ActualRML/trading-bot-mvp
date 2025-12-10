@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.30;
 
-import "../interfaces/oracle/IPriceOracle.sol";
+import { IPriceOracle } from "../interfaces/oracle/IPriceOracle.sol";
 
 /// @notice Mock oracle untuk testing FuturesExchange
 contract MockPriceOracle is IPriceOracle {

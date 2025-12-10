@@ -1,0 +1,86 @@
+[
+  {
+    "inputs": [
+      { "internalType": "address", "name": "_owner", "type": "address" },
+      { "internalType": "address", "name": "_vault", "type": "address" }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "inputs": [],
+    "name": "vault",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "exchange",
+    "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "address", "name": "_exchange", "type": "address" }],
+    "name": "setExchange",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "address", "name": "user", "type": "address" },
+      { "internalType": "bytes32", "name": "asset", "type": "bytes32" },
+      { "internalType": "uint256", "name": "size", "type": "uint256" },
+      { "internalType": "bool", "name": "isLong", "type": "bool" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "collateralAmount", "type": "uint256" }
+    ],
+    "name": "openPosition",
+    "outputs": [{ "internalType": "bytes32", "name": "", "type": "bytes32" }],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "positionId", "type": "bytes32" },
+      { "internalType": "address", "name": "", "type": "address" },
+      { "internalType": "uint256", "name": "", "type": "uint256" }
+    ],
+    "name": "closePosition",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [{ "internalType": "bytes32", "name": "positionId", "type": "bytes32" }],
+    "name": "getPosition",
+    "outputs": [
+      {
+        "components": [
+          { "internalType": "address", "name": "user", "type": "address" },
+          { "internalType": "bytes32", "name": "asset", "type": "bytes32" },
+          { "internalType": "uint256", "name": "size", "type": "uint256" },
+          { "internalType": "uint256", "name": "entryPrice", "type": "uint256" },
+          { "internalType": "bool", "name": "isLong", "type": "bool" }
+        ],
+        "internalType": "struct Position",
+        "name": "",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      { "internalType": "bytes32", "name": "positionId", "type": "bytes32" },
+      { "internalType": "uint256", "name": "price", "type": "uint256" }
+    ],
+    "name": "setEntryPrice",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

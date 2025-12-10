@@ -33,6 +33,17 @@ library Events {
         uint256 amount
     );
 
+    event VaultLockCollateral(
+        address indexed user,
+        address indexed token,
+        uint256 amount
+    );
+
+    event VaultUnlockCollateral(
+        address indexed user,
+        address indexed token,
+        uint256 amount
+    );
 
     // ============================
     // OrderBook Events
@@ -51,7 +62,6 @@ library Events {
         address indexed user
     );
 
-
     // ============================
     // Execution Events
     // ============================
@@ -64,23 +74,33 @@ library Events {
     );
 
     event SpotTradeExecuted(
-    uint256 indexed tradeId,
-    uint256 buyOrderId,
-    uint256 sellOrderId,
-    address base,
-    uint256 amount,
-    uint256 price,
-    address buyer,
-    address seller,
-    uint256 fee
-);
+        uint256 indexed tradeId,
+        uint256 buyOrderId,
+        uint256 sellOrderId,
+        address base,
+        uint256 amount,
+        uint256 price,
+        address buyer,
+        address seller,
+        uint256 fee
+    );
 
     // ============================
     // Position Events
     // ============================
-event PositionOpened(bytes32 positionId, address indexed user, bytes32 asset, uint256 size, bool isLong);
-event PositionClosed(bytes32 positionId, address indexed user, bytes32 asset, uint256 size, bool isLong);
+    event PositionOpened(
+        bytes32 positionId,
+        address indexed user,
+        bytes32 asset,
+        uint256 size,
+        bool isLong
+    );
 
-
-
+    event PositionClosed(
+        bytes32 positionId,
+        address indexed user,
+        bytes32 asset,
+        uint256 size,
+        bool isLong
+    );
 }

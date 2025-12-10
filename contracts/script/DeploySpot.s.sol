@@ -10,8 +10,7 @@ contract DeploySpot is Script {
     function run() external {
         vm.startBroadcast();
 
-        // Wallet deployer (lebih aman daripada msg.sender)
-        address deployer = tx.origin;
+        address deployer = msg.sender;
 
         // Deploy Vault
         SpotVault vault = new SpotVault(deployer);

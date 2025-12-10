@@ -10,8 +10,8 @@ contract DeployOracle is Script {
 
         // NOTE:
         // Replace dengan address oracle beneran kalau nanti sudah deploy mock Pyth dan Chainlink adapter.
-        address pythAddress = 0x1111111111111111111111111111111111111111;
-        address chainlinkAddress = 0x2222222222222222222222222222222222222222;
+        address pythAddress = address(0);
+        address chainlinkAddress = address(0);
 
         PriceOracleRouter oracle =
             new PriceOracleRouter(pythAddress, chainlinkAddress);

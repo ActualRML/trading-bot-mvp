@@ -1,0 +1,25 @@
+{
+  "abi": [
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "priceId", "type": "bytes32" },
+        { "internalType": "int256", "name": "price", "type": "int256" }
+      ],
+      "name": "setPrice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        { "internalType": "bytes32", "name": "priceId", "type": "bytes32" }
+      ],
+      "name": "getPrice",
+      "outputs": [
+        { "internalType": "int256", "name": "", "type": "int256" }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
